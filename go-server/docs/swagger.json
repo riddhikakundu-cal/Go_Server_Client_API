@@ -1,0 +1,125 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "A simple Movie Management API with async POST processing and polling support.",
+        "title": "Movie API",
+        "termsOfService": "http://example.com/terms/",
+        "contact": {
+            "name": "Riddhika Kundu",
+            "email": "riddhika@example.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api",
+    "paths": {
+        "/movies/batch": {
+            "post": {
+                "description": "Accepts a batch of movies and returns a task ID for progress polling",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "movies"
+                ],
+                "summary": "Start async batch movie processing",
+                "parameters": [
+                    {
+                        "description": "List of movies",
+                        "name": "movies",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Movie"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "202": {
+                        "description": "Accepted",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/movies/status/{taskId}": {
+            "get": {
+                "description": "Returns progress and remaining time of the task",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "movies"
+                ],
+                "summary": "Check task progress",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Task ID",
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Movie": {
+            "type": "object",
+            "properties": {
+                "director": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

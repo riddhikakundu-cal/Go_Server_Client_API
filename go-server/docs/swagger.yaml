@@ -1,0 +1,84 @@
+basePath: /api
+definitions:
+  models.Movie:
+    properties:
+      director:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: riddhika@example.com
+    name: Riddhika Kundu
+  description: A simple Movie Management API with async POST processing and polling
+    support.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://example.com/terms/
+  title: Movie API
+  version: "1.0"
+paths:
+  /movies/batch:
+    post:
+      consumes:
+      - application/json
+      description: Accepts a batch of movies and returns a task ID for progress polling
+      parameters:
+      - description: List of movies
+        in: body
+        name: movies
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Movie'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "202":
+          description: Accepted
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Start async batch movie processing
+      tags:
+      - movies
+  /movies/status/{taskId}:
+    get:
+      description: Returns progress and remaining time of the task
+      parameters:
+      - description: Task ID
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Check task progress
+      tags:
+      - movies
+swagger: "2.0"
